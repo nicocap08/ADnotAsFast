@@ -24,6 +24,7 @@ export default {
       automatorUnlocked: false,
       automatorLogSize: 0,
       gamePaused: false,
+      globalSpeedFactorSlider: 1,
     };
   },
   computed: {
@@ -44,6 +45,15 @@ export default {
         width: "100%",
         tooltip: false
       };
+    },
+    sliderPropsSpeedMult() {
+      return {
+        min: 1,
+        max: 1000,
+        interval: 1,
+        width: "100%",
+        tooltip: false
+      }
     }
   },
   watch: {
@@ -71,6 +81,9 @@ export default {
       }
       player.options.gamePaused = newValue;
     },
+    globalSpeedFactorSlider(newValue) {
+      window.globalSpeedFactor = newValue; 
+    }
   },
   // This puts the slider in the right spot on initialization
   created() {
@@ -91,6 +104,7 @@ export default {
       this.automatorUnlocked = Player.automatorUnlocked;
       this.automatorLogSize = options.automatorEvents.maxEntries;
       this.gamePaused = options.gamePaused;
+      this.globalSpeedFactorSlider = window.globalSpeedFactor;
     },
     // Given the endpoints of 22-54, this produces 500, 600, ... , 900, 1000, 2000, ... , 1e6 ticks
     // It's essentially 10^(x/10) but with the mantissa spaced linearly instead of logarithmically
@@ -105,6 +119,10 @@ export default {
     adjustSliderValueAutomatorLogSize(value) {
       this.automatorLogSize = value;
       player.options.automatorEvents.maxEntries = this.automatorLogSize;
+    },
+    adjustSliderValueTimeFactor(value) {
+      this.globalSpeedFactorSlider = value;
+      //window.globalSpeedFactor = this.globalSpeedFactor;
     }
   }
 };
@@ -162,6 +180,15 @@ export default {
           on="Resume the game"
           off="Pause the game"
         />
+        <div class="o-primary-btn o-primary-btn--option o-primary-btn--slider l-options-grid__button">
+          <b>Speed multiplier: {{ formatInt(globalSpeedFactorSlider) }}</b>
+          <SliderComponent
+            class="o-primary-btn--slider__slider"
+            v-bind="sliderPropsSpeedMult"
+            :value="globalSpeedFactorSlider"
+            @input="adjustSliderValueTimeFactor($event)"
+          />
+        </div>
         <div
           v-if="automatorUnlocked"
           class="o-primary-btn o-primary-btn--option o-primary-btn--slider l-options-grid__button"

@@ -66,6 +66,9 @@ export default {
     },
     hideGoogleName(newValue) {
       player.options.hideGoogleName = newValue;
+    },
+    speedFactorChange(newValue) {
+      window.speedFactor = newValue;
     }
   },
   methods: {
