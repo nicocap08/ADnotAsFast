@@ -1,6 +1,7 @@
 <script>
 import PrimaryButton from "@/components/PrimaryButton";
 import PrimaryToggleButton from "@/components/PrimaryToggleButton";
+import { Autobuyer } from "../../../core/globals";
 
 export default {
   name: "ReplicantiGalaxyButton",
@@ -15,6 +16,7 @@ export default {
       isAutoActive: false,
       isAutoEnabled: false,
       isDivideUnlocked: false,
+      isForceEnabled: false,
       boughtGalaxies: 0,
       extraGalaxies: 0
     };
@@ -39,6 +41,9 @@ export default {
       const disabled = !this.isAutoEnabled;
       return `Auto Galaxy ${auto ? "ON" : "OFF"}${disabled ? " (disabled)" : ""}`;
     },
+    forceEnableTextDisplay() {
+      return `Force enable auto galaxy ${this.isForceEnabled ? "ON":"OFF"}`
+    }
   },
   methods: {
     update() {
@@ -49,11 +54,16 @@ export default {
       this.isDivideUnlocked = Achievement(126).isUnlocked;
       const auto = Autobuyer.replicantiGalaxy;
       this.isAutoUnlocked = auto.isUnlocked;
+      this.isForceEnabled = auto.isForceEnabled;
       this.isAutoActive = auto.isActive;
       this.isAutoEnabled = auto.isEnabled;
     },
     handleAutoToggle(value) {
       Autobuyer.replicantiGalaxy.isActive = value;
+      this.update();
+    },
+    handleForceEnable(value) {
+      Autobuyer.replicantiGalaxy.isForceEnabled = value;
       this.update();
     },
     handleClick() {
@@ -81,6 +91,14 @@ export default {
       :off="autobuyerTextDisplay"
       class="l--spoon-btn-group__little-spoon o-primary-btn--replicanti-galaxy-toggle"
       @input="handleAutoToggle"
+    />
+    <PrimaryToggleButton
+      v-if="isAutoUnlocked"
+      :value="isForceEnabled"
+      :on="forceEnableTextDisplay"
+      :off="forceEnableTextDisplay"
+      class="l--spoon-btn-group__little-spoon o-primary-btn--replicanti-galaxy-toggle"
+      @input="handleForceEnable"
     />
   </div>
 </template>

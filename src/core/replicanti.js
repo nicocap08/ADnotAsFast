@@ -425,7 +425,6 @@ export const ReplicantiUpgrade = {
 
     get baseCost() { return player.replicanti.galCost; }
     set baseCost(value) { player.replicanti.galCost = value; }
-
     get distantRGStart() {
       return 100 + Effects.sum(GlyphSacrifice.replication);
     }
